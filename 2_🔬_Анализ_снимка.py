@@ -1,47 +1,28 @@
+# xray_diagnosis/1_🏠_Главная.py
 import streamlit as st
-import tensorflow as tf
-import numpy as np
-from PIL import Image
 
-# Классы заболеваний
-CLASS_NAMES = [
-    'Atelectasis', 'Cardiomegaly', 'Consolidation', 'Edema', 'Effusion',
-    'Emphysema', 'Fibrosis', 'Hernia', 'Infiltration', 'Mass',
-    'Nodule', 'Pleural_Thickening', 'Pneumonia', 'Pneumothorax'
-]
+st.set_page_config(page_title="Главная", page_icon="🏠")
 
-IMG_SIZE = (224, 224)
-MODEL_PATH = "xray_model.keras"
+st.title("🏥 ИИ для анализа рентгеновских снимков грудной клетки")
 
-# Кешируем загрузку модели
-@st.cache_resource
-def load_model():
-    return tf.keras.models.load_model(MODEL_PATH, compile=False)
+st.markdown("""
+### 🤖 Что умеет система?
 
-# Предобработка изображения
-def preprocess_image(image: Image.Image):
-    image = image.convert("RGB")
-    image = image.resize(IMG_SIZE)
-    image_array = np.array(image) / 255.0
-    return np.expand_dims(image_array, axis=0)
+- Выдаёт вероятность наличия каждого заболевания
+- Показывает **Grad-CAM**, объясняя, где ИИ видит патологию
+- Генерирует **PDF-отчёт** с результатами
 
-# Интерфейс
-st.set_page_config(page_title="Классификация заболеваний по рентгену", layout="centered")
-st.title("💀 Классификация заболеваний по рентгену")
-st.write("Загрузите изображение грудной клетки для анализа моделью.")
+---
 
-uploaded_file = st.file_uploader("Загрузите изображение", type=["jpg", "jpeg", "png"])
+### 🛠️ Как работает?
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Загруженное изображение", use_column_width=True)
+1. Вы загружаете изображение (JPG/PNG)
+2. Модель анализирует снимок
+3. Вы получаете диагноз и визуализацию
 
-    st.write("🔍 Анализируем...")
+---
 
-    model = load_model()
-    preprocessed = preprocess_image(image)
-    prediction = model.predict(preprocessed)[0]
+### 👉 Перейти к анализу
 
-    st.subheader("Результаты:")
-    for name, prob in zip(CLASS_NAMES, prediction):
-        st.write(f"**{name}**: {prob * 100:.2f}%")
+Перейдите во вкладку **🔬 Анализ снимка** в боковом меню слева.
+""")
